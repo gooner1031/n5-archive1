@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N5 Archive — Future Stars Database</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #F0E8D0;
+    --parchment-dark: #E2D4B0;
+    --ink: #1A1208;
+    --ink-light: #3D2E1A;
+    --scout-green: #2D4A2A;
+    --scout-green-light: #4A7A45;
+    --red-stamp: #8B1A1A;
+    --gold-rule: #9B7D3A;
+    --gold-light: #C4A45A;
+    --paper-shadow: rgba(26,18,8,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #111008;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(155,125,58,0.07) 30px);
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--scout-green);
+    border-bottom: 3px solid var(--gold-rule);
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.6);
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 54px;
+  }
+  .logo { display: flex; flex-direction: column; line-height: 1; }
+  .logo-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px; font-weight: 900;
+    color: var(--parchment); letter-spacing: 2px;
+  }
+  .logo-sub {
+    font-family: 'Courier Prime', monospace;
+    font-size: 8px; color: var(--gold-light);
+    letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;
+  }
+  .header-right {
+    text-align: right;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px; color: var(--gold-light); opacity: 0.8; line-height: 1.5;
+  }
+
+  /* ── PAGE WRAP ── */
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 18px 12px 70px; }
+
+  /* ── CONTROLS ── */
+  .controls-block {
+    background: var(--parchment);
+    border: 1px solid var(--gold-rule);
+    padding: 13px 13px 10px;
+    margin-bottom: 14px;
+    box-shadow: 2px 2px 8px var(--paper-shadow);
+  }
+  .search-row { display: flex; gap: 7px; margin-bottom: 12px; }
+  .search-input {
+    flex: 1;
+    background: #FBF6E8; border: 1px solid var(--gold-rule);
+    border-radius: 0; font-family: 'Courier Prime', monospace;
+    font-size: 14px; color: var(--ink); padding: 8px 11px; outline: none;
+  }
+  .search-input::placeholder { color: #9B8A5A; }
+  .search-input:focus { border-color: var(--scout-green); }
+  .search-btn {
+    background: var(--scout-green); color: var(--parchment); border: none;
+    font-family: 'Courier Prime', monospace; font-size: 12px;
+    padding: 8px 14px; cursor: pointer; letter-spacing: 1px; white-space: nowrap;
+  }
+  .search-btn:hover { background: var(--scout-green-light); }
+
+  .filter-label {
+    font-family: 'Courier Prime', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 2px; color: var(--gold-rule); text-transform: uppercase; margin-bottom: 6px;
+  }
+
+  /* Potential stars filter */
+  .pot-filter-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 11px; }
+  .pot-btn {
+    font-family: 'Courier Prime', monospace; font-size: 11px;
+    padding: 4px 9px; border: 1px solid var(--gold-rule);
+    background: transparent; color: var(--ink-light); cursor: pointer; transition: all 0.12s;
+  }
+  .pot-btn:hover, .pot-btn.active {
+    background: var(--scout-green); color: var(--parchment); border-color: var(--scout-green);
+  }
+
+  .filter-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .filter-select {
+    flex: 1; min-width: 110px;
+    background: #FBF6E8; border: 1px solid var(--gold-rule);
+    font-family: 'Courier Prime', monospace; font-size: 12px;
+    color: var(--ink); padding: 6px 8px; outline: none; cursor: pointer; border-radius: 0;
+  }
+  .filter-select:focus { border-color: var(--scout-green); }
+
+  /* ── SORT BAR ── */
+  .sort-bar {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .sort-label { font-family: 'Courier Prime', monospace; font-size: 9px; color: rgba(240,232,208,0.45); letter-spacing: 1px; }
+  .sort-btn {
+    font-family: 'Courier Prime', monospace; font-size: 11px;
+    padding: 3px 9px; border: 1px solid rgba(155,125,58,0.35);
+    background: transparent; color: rgba(240,232,208,0.6); cursor: pointer;
+  }
+  .sort-btn:hover, .sort-btn.active {
+    background: rgba(155,125,58,0.18); border-color: var(--gold-light); color: var(--parchment);
+  }
+
+  /* ── RESULTS META ── */
+  .results-meta {
+    font-family: 'Courier Prime', monospace; font-size: 10px;
+    color: rgba(240,232,208,0.38); margin-bottom: 10px; padding-left: 2px; letter-spacing: 1px;
+  }
+
+  /* ── PLAYER CARD ── */
+  .players-grid { display: flex; flex-direction: column; gap: 9px; }
+
+  .player-card {
+    background: var(--parchment);
+    border: 1px solid var(--gold-rule);
+    position: relative; cursor: pointer;
+    box-shadow: 2px 3px 10px var(--paper-shadow);
+    transition: transform 0.1s, box-shadow 0.1s;
+    overflow: hidden;
+  }
+  .player-card:hover { transform: translateY(-1px); box-shadow: 3px 5px 16px rgba(26,18,8,0.28); }
+  .player-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--scout-green);
+  }
+
+  .card-inner { padding: 11px 12px 10px 17px; display: flex; align-items: flex-start; gap: 11px; }
+  .card-main { flex: 1; min-width: 0; }
+
+  .card-top { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
+  .player-name-ja {
+    font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.2;
+  }
+  .player-name-en {
+    font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--ink-light); opacity: 0.7;
+  }
+
+  .card-meta-row {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 5px;
+  }
+  .meta-item {
+    font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--ink-light); opacity: 0.8;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold-rule); opacity: 0.45; flex-shrink: 0; }
+
+  /* STAR RATING on card */
+  .card-stars { display: flex; align-items: center; gap: 2px; margin-bottom: 5px; }
+  .star { font-size: 11px; line-height: 1; }
+  .star-filled { color: #C4963A; }
+  .star-empty { color: #C4963A; opacity: 0.22; }
+
+  .card-comment {
+    font-size: 12px; color: var(--ink-light); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    font-style: italic;
+  }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin: 5px 0 2px; }
+  .tag {
+    font-family: 'Courier Prime', monospace; font-size: 9px;
+    padding: 2px 6px; border: 1px solid; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .tag-pos { border-color: var(--scout-green); color: var(--scout-green); background: rgba(45,74,42,0.07); }
+  .tag-val { border-color: var(--gold-rule); color: var(--gold-rule); background: rgba(155,125,58,0.06); }
+
+  .card-xlink {
+    display: inline-flex; align-items: center; gap: 3px; margin-top: 5px;
+    font-family: 'Courier Prime', monospace; font-size: 10px; color: var(--scout-green);
+    text-decoration: none; border-bottom: 1px dashed rgba(45,74,42,0.35);
+  }
+  .card-xlink:hover { color: var(--red-stamp); border-color: var(--red-stamp); }
+
+  /* POTENTIAL BADGE (right side) */
+  .pot-badge {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-width: 52px; flex-shrink: 0; padding-top: 2px;
+  }
+  .pot-ring {
+    width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold-rule);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(155,125,58,0.05);
+  }
+  .pot-number {
+    font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900;
+    color: var(--gold-rule); line-height: 1;
+  }
+  .pot-max {
+    font-family: 'Courier Prime', monospace; font-size: 8px; color: var(--gold-rule); opacity: 0.6;
+  }
+  /* High potential coloring */
+  .pot-high .pot-ring { border-color: var(--red-stamp); background: rgba(139,26,26,0.06); }
+  .pot-high .pot-number { color: var(--red-stamp); }
+  .pot-high .pot-max { color: var(--red-stamp); }
+  .pot-mid .pot-ring { border-color: var(--scout-green); background: rgba(45,74,42,0.07); }
+  .pot-mid .pot-number { color: var(--scout-green); }
+  .pot-mid .pot-max { color: var(--scout-green); }
+
+  /* ── STATE MESSAGES ── */
+  .state-msg {
+    text-align: center; padding: 40px 20px;
+    font-family: 'Courier Prime', monospace; font-size: 13px;
+    color: rgba(240,232,208,0.35); letter-spacing: 1px;
+  }
+  .state-msg .icon { font-size: 30px; margin-bottom: 10px; }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78); z-index: 200;
+    overflow-y: auto; padding: 16px 12px;
+  }
+  .modal-backdrop.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal {
+    background: var(--parchment); max-width: 580px; width: 100%;
+    position: relative; box-shadow: 0 10px 50px rgba(0,0,0,0.65);
+    margin: auto; border-top: 4px solid var(--scout-green);
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 12px;
+    background: none; border: none; font-size: 20px;
+    color: rgba(240,232,208,0.7); cursor: pointer; z-index: 10; line-height: 1;
+  }
+  .modal-close:hover { color: var(--red-stamp); }
+
+  .modal-head { background: var(--scout-green); padding: 18px 18px 14px; }
+  .modal-head-row { display: flex; align-items: center; gap: 14px; }
+  .modal-pot-ring {
+    width: 62px; height: 62px; border-radius: 50%;
+    border: 2px solid var(--gold-light); flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .modal-pot-num {
+    font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900;
+    color: var(--gold-light); line-height: 1;
+  }
+  .modal-pot-sub { font-family: 'Courier Prime', monospace; font-size: 7px; color: rgba(240,232,208,0.5); letter-spacing: 1px; }
+  .modal-name-ja { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--parchment); line-height: 1.2; }
+  .modal-name-en { font-family: 'Courier Prime', monospace; font-size: 11px; color: rgba(240,232,208,0.6); margin-top: 3px; }
+  .modal-stars-row { display: flex; gap: 2px; margin-top: 6px; }
+  .modal-star { font-size: 14px; }
+  .modal-star-filled { color: var(--gold-light); }
+  .modal-star-empty { color: var(--gold-light); opacity: 0.2; }
+
+  .modal-body { padding: 16px 18px 18px; }
+  .modal-field { display: flex; align-items: baseline; border-bottom: 1px dashed rgba(155,125,58,0.25); padding: 7px 0; }
+  .modal-field-key {
+    font-family: 'Courier Prime', monospace; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; color: var(--gold-rule); text-transform: uppercase;
+    min-width: 88px; flex-shrink: 0;
+  }
+  .modal-field-val { font-family: 'Source Sans 3', sans-serif; font-size: 13px; color: var(--ink); line-height: 1.4; }
+  .modal-comment {
+    margin-top: 13px; padding: 11px 12px;
+    background: rgba(155,125,58,0.07); border-left: 3px solid var(--gold-rule);
+    font-size: 13px; color: var(--ink-light); line-height: 1.65; font-style: italic;
+  }
+  .modal-xbtn {
+    display: block; margin: 14px 0 0;
+    background: var(--ink); color: var(--parchment);
+    text-align: center; padding: 11px; font-family: 'Courier Prime', monospace;
+    font-size: 13px; letter-spacing: 1px; text-decoration: none;
+  }
+  .modal-xbtn:hover { background: var(--scout-green); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 20px;
+    font-family: 'Courier Prime', monospace; font-size: 10px;
+    color: rgba(240,232,208,0.25); letter-spacing: 1px;
+  }
+  footer a { color: var(--gold-light); text-decoration: none; opacity: 0.6; }
+
+  @media (max-width: 420px) {
+    .player-name-ja { font-size: 14px; }
+    .pot-ring { width: 44px; height: 44px; }
+    .pot-number { font-size: 17px; }
+    .modal-name-ja { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-main">N5 ARCHIVE</span>
+      <span class="logo-sub">Future Stars Database</span>
+    </div>
+    <div class="header-right">@gggggoooooiiiiii<br>SCOUT ARCHIVE</div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <div class="controls-block">
+    <div class="search-row">
+      <input class="search-input" id="searchInput" type="text" placeholder="選手名で検索（日本語 / English）…" autocomplete="off">
+      <button class="search-btn" onclick="applyFilters()">検索</button>
+    </div>
+
+    <div class="filter-label">ポテンシャル ★</div>
+    <div class="pot-filter-row" id="potFilterRow">
+      <button class="pot-btn active" data-val="all" onclick="setPot('all',this)">ALL</button>
+      <button class="pot-btn" data-val="8" onclick="setPot('8',this)">★8</button>
+      <button class="pot-btn" data-val="7" onclick="setPot('7',this)">★7</button>
+      <button class="pot-btn" data-val="6" onclick="setPot('6',this)">★6</button>
+      <button class="pot-btn" data-val="5" onclick="setPot('5',this)">★5</button>
+      <button class="pot-btn" data-val="low" onclick="setPot('low',this)">★4以下</button>
+    </div>
+
+    <div class="filter-row">
+      <select class="filter-select" id="filterNat" onchange="applyFilters()">
+        <option value="">🌍 国籍 ALL</option>
+      </select>
+    </div>
+    <div class="filter-row" style="margin-top:7px;">
+      <select class="filter-select" id="filterClub" onchange="applyFilters()">
+        <option value="">🏟 クラブ ALL</option>
+      </select>
+      <select class="filter-select" id="filterYear" onchange="applyFilters()">
+        <option value="">生年 ALL</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sort-bar">
+    <span class="sort-label">SORT /</span>
+    <button class="sort-btn active" onclick="setSort('ja',this)">あいうえお</button>
+    <button class="sort-btn" onclick="setSort('en',this)">A–Z</button>
+    <button class="sort-btn" onclick="setSort('pot',this)">ポテンシャル</button>
+    <button class="sort-btn" onclick="setSort('val',this)">市場価値</button>
+    <button class="sort-btn" onclick="setSort('date',this)">紹介日</button>
+    <button class="sort-btn" onclick="setSort('nat',this)">国籍</button>
+  </div>
+
+  <div class="results-meta" id="resultsMeta">— LOADING ARCHIVE —</div>
+  <div class="players-grid" id="playersGrid">
+    <div class="state-msg"><div class="icon">📋</div>データ読み込み中…</div>
+  </div>
+
+</div>
+
+<footer>
+  <p>N5 ARCHIVE — All scouting posts © @gggggoooooiiiiii</p>
+  <p style="margin-top:4px;"><a href="https://x.com/gggggoooooiiiiii" target="_blank">X でフォロー →</a></p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-head" id="modalHead"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   ★ 選手データ ★
+   ポストが増えたら下の PLAYERS 配列に追加してください。
+
+   フォーマット：
+   {
+     nameJa:      "日本語名",
+     nameEn:      "English Name",
+     flag:        "🇬🇷",          // 国旗絵文字
+     nationality: "ギリシャ",       // 国籍（カタカナ）
+     birthYear:   2002,           // 生年
+     birthDate:   "2002年1月30日",
+     height:      "179cm",
+     foot:        "R",            // R / L / 両足
+     position:    "AM",           // ポジション
+     club:        "Club Brugge",
+     clubFlag:    "🇧🇪",
+     marketValue: "€40.00m",      // 文字列
+     marketValueNum: 40,          // 数値（ソート用・単位:百万€）
+     potential:   6,              // ★の数（1〜8）
+     comment:     "欧州全土が刮目する新進気鋭の特級チャンスメーカー",
+     xUrl:        "https://x.com/i/status/XXXXXXXXX",
+     postedAt:    "2026-06-15"
+   }
+================================================================ */
+const PLAYERS = [
+  {
+    nameJa: "クリストス・ツォリス",
+    nameEn: "Christos Tzolis",
+    flag: "🇬🇷",
+    nationality: "ギリシャ",
+    birthYear: 2002,
+    birthDate: "2002年1月30日",
+    height: "179cm",
+    foot: "R",
+    position: "AM",
+    club: "Club Brugge",
+    clubFlag: "🇧🇪",
+    marketValue: "€40.00m",
+    marketValueNum: 40,
+    potential: 6,
+    comment: "欧州全土が刮目する新進気鋭の特級チャンスメーカー",
+    xUrl: "https://x.com/i/status/2066480141669404706",
+    postedAt: "2026-06-15"
+  }
+  /* ↑ ここより上に選手データをカンマ区切りで追加 */
+];
+
+/* ================================================================
+   STATE
+================================================================ */
+let currentSort = 'ja';
+let currentPot  = 'all';
+let currentNat  = '';
+let currentPos  = '';
+let currentClub = '';
+let currentYear = '';
+let currentQ    = '';
+
+/* ================================================================
+   BOOT
+================================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  buildDropdowns();
+  renderCards();
+  const si = document.getElementById('searchInput');
+  si.addEventListener('input', () => { currentQ = si.value.trim().toLowerCase(); applyFilters(); });
+  si.addEventListener('keydown', e => { if(e.key==='Enter') applyFilters(); });
+});
+
+function buildDropdowns() {
+  // Nationality
+  const nats = [...new Set(PLAYERS.map(p=>p.nationality))].sort();
+  const ns = document.getElementById('filterNat');
+  nats.forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; ns.appendChild(o); });
+
+  // Club
+  const clubs = [...new Set(PLAYERS.map(p=>p.club))].sort();
+  const cs = document.getElementById('filterClub');
+  clubs.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
+
+  // BirthYear
+  const years = [...new Set(PLAYERS.map(p=>p.birthYear))].sort((a,b)=>b-a);
+  const ys = document.getElementById('filterYear');
+  years.forEach(y => { const o=document.createElement('option'); o.value=y; o.textContent=y+'年生まれ'; ys.appendChild(o); });
+}
+
+/* ================================================================
+   FILTERS
+================================================================ */
+function setPot(val, btn) {
+  currentPot = val;
+  document.querySelectorAll('.pot-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function setSort(val, btn) {
+  currentSort = val;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function applyFilters() {
+  currentQ    = document.getElementById('searchInput').value.trim().toLowerCase();
+  currentNat  = document.getElementById('filterNat').value;
+  currentClub = document.getElementById('filterClub').value;
+  currentYear = document.getElementById('filterYear').value;
+  renderCards();
+}
+
+function getFiltered() {
+  return PLAYERS.filter(p => {
+    if(currentNat  && p.nationality !== currentNat) return false;
+    if(currentClub && p.club !== currentClub)       return false;
+    if(currentYear && String(p.birthYear) !== currentYear) return false;
+    if(currentPot === '8' && p.potential !== 8) return false;
+    if(currentPot === '7' && p.potential !== 7) return false;
+    if(currentPot === '6' && p.potential !== 6) return false;
+    if(currentPot === '5' && p.potential !== 5) return false;
+    if(currentPot === 'low' && p.potential > 4) return false;
+    if(currentQ) {
+      const hay = (p.nameJa+p.nameEn+p.club+p.nationality).toLowerCase();
+      if(!hay.includes(currentQ)) return false;
+    }
+    return true;
+  });
+}
+
+function getSorted(arr) {
+  return [...arr].sort((a,b) => {
+    if(currentSort==='ja')  return a.nameJa.localeCompare(b.nameJa,'ja');
+    if(currentSort==='en')  return a.nameEn.localeCompare(b.nameEn,'en');
+    if(currentSort==='pot') return b.potential - a.potential;
+    if(currentSort==='val') return b.marketValueNum - a.marketValueNum;
+    if(currentSort==='date')return new Date(b.postedAt)-new Date(a.postedAt);
+    if(currentSort==='nat') return a.nationality.localeCompare(b.nationality,'ja');
+    return 0;
+  });
+}
+
+/* ================================================================
+   STARS HTML
+================================================================ */
+function starsHtml(n, total=8, filledCls='star-filled', emptyCls='star-empty', cls='star') {
+  let h='';
+  for(let i=1;i<=total;i++){
+    h+=`<span class="${cls} ${i<=n?filledCls:emptyCls}">★</span>`;
+  }
+  return h;
+}
+
+/* ================================================================
+   RENDER CARDS
+================================================================ */
+function renderCards() {
+  const data = getSorted(getFiltered());
+  const grid = document.getElementById('playersGrid');
+  document.getElementById('resultsMeta').textContent = `— ${data.length} PLAYER${data.length!==1?'S':''} FOUND —`;
+
+  if(!data.length) {
+    grid.innerHTML=`<div class="state-msg"><div class="icon">🔍</div>条件に合う選手が見つかりませんでした。</div>`;
+    return;
+  }
+
+  grid.innerHTML = data.map(p => {
+    const idx = PLAYERS.indexOf(p);
+    const potClass = p.potential>=7 ? 'pot-high' : p.potential>=5 ? 'pot-mid' : '';
+    const age = new Date().getFullYear() - p.birthYear;
+    return `
+    <div class="player-card" onclick="openModal(${idx})">
+      <div class="card-inner">
+        <div class="card-main">
+          <div class="card-top">
+            <span class="player-name-ja">${p.flag} ${p.nameJa}</span>
+            <span class="player-name-en">${p.nameEn}</span>
+          </div>
+          <div class="card-meta-row">
+            <span class="meta-item">${p.nationality}</span>
+            <span class="dot"></span>
+            <span class="meta-item">${p.clubFlag||''} ${p.club}</span>
+            <span class="dot"></span>
+            <span class="meta-item">${p.birthYear}年生（${age}歳）</span>
+          </div>
+          <div class="card-stars">${starsHtml(p.potential)}</div>
+          <div class="card-tags">
+            <span class="tag tag-pos">${p.position}</span>
+            <span class="tag tag-val">${p.marketValue||'—'}</span>
+            ${p.height ? `<span class="tag tag-pos" style="border-color:var(--gold-rule);color:var(--gold-rule);background:rgba(155,125,58,0.06)">${p.height} / ${p.foot}</span>` : ''}
+          </div>
+          ${p.comment ? `<div class="card-comment">「${p.comment}」</div>` : ''}
+          <a class="card-xlink" href="${p.xUrl}" target="_blank" onclick="event.stopPropagation()">▸ Xのポストを見る</a>
+        </div>
+        <div class="pot-badge ${potClass}">
+          <div class="pot-ring">
+            <span class="pot-number">${p.potential}</span>
+            <span class="pot-max">/8</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   MODAL
+================================================================ */
+function openModal(idx) {
+  const p = PLAYERS[idx];
+  const age = new Date().getFullYear() - p.birthYear;
+
+  document.getElementById('modalHead').innerHTML = `
+    <div class="modal-head-row">
+      <div class="modal-pot-ring">
+        <span class="modal-pot-num">${p.potential}</span>
+        <span class="modal-pot-sub">/ 8 POT</span>
+      </div>
+      <div>
+        <div class="modal-name-ja">${p.flag} ${p.nameJa}</div>
+        <div class="modal-name-en">${p.nameEn}</div>
+        <div class="modal-stars-row">${starsHtml(p.potential,'modal-star-filled','modal-star-empty','modal-star')}</div>
+      </div>
+    </div>`;
+
+  const fields = [
+    ['国籍',   p.nationality],
+    ['生年月日', `${p.birthDate}（${age}歳）`],
+    ['身長/足', `${p.height} / 利き足:${p.foot}`],
+    ['所属',   `${p.clubFlag||''} ${p.club}`],
+    ['市場価値', p.marketValue||'—'],
+    ['ポジション', p.position],
+    ['紹介日',  p.postedAt ? p.postedAt.replace(/-/g,'.') : '—'],
+  ];
+
+  document.getElementById('modalBody').innerHTML = `
+    ${fields.map(([k,v])=>`
+      <div class="modal-field">
+        <div class="modal-field-key">${k}</div>
+        <div class="modal-field-val">${v}</div>
+      </div>`).join('')}
+    ${p.comment ? `<div class="modal-comment">「${p.comment}」</div>` : ''}
+    <a class="modal-xbtn" href="${p.xUrl}" target="_blank">▸ Xのオリジナルポストを読む</a>
+  `;
+
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeOnBg(e) { if(e.target===document.getElementById('modalBackdrop')) closeModal(); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
