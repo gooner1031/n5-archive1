@@ -344,6 +344,13 @@
       <select class="filter-select" id="filterNat" onchange="applyFilters()">
         <option value="">🌍 国籍 ALL</option>
       </select>
+      <select class="filter-select" id="filterPosGroup" onchange="applyFilters()">
+        <option value="">ポジション ALL</option>
+        <option value="GK">GK</option>
+        <option value="DF">DF</option>
+        <option value="MF">MF</option>
+        <option value="FW">FW</option>
+      </select>
     </div>
     <div class="filter-row" style="margin-top:7px;">
       <select class="filter-select" id="filterClub" onchange="applyFilters()">
@@ -363,6 +370,8 @@
     <button class="sort-btn" onclick="setSort('val',this)">市場価値</button>
     <button class="sort-btn" onclick="setSort('date',this)">紹介日</button>
     <button class="sort-btn" onclick="setSort('nat',this)">国籍</button>
+    <button class="sort-btn" onclick="setSort('posgroup',this)">ポジション</button>
+    <button class="sort-btn" onclick="setSort('league',this)">リーグ</button>
   </div>
 
   <div class="results-meta" id="resultsMeta">— LOADING ARCHIVE —</div>
@@ -374,7 +383,6 @@
 
 <footer>
   <p>N5 ARCHIVE — All scouting posts © @gggggoooooiiiiii</p>
-  <p style="margin-top:4px;"><a href="https://x.com/gggggoooooiiiiii" target="_blank">X でフォロー →</a></p>
 </footer>
 
 <!-- MODAL -->
@@ -404,6 +412,7 @@
      position:    "AM",           // ポジション
      club:        "Club Brugge",
      clubFlag:    "🇧🇪",
+     league:      "Jupiler Pro League",  // 所属リーグ（英語表記）
      marketValue: "€40.00m",      // 文字列
      marketValueNum: 40,          // 数値（ソート用・単位:百万€）
      potential:   6,              // ★の数（1〜8）
@@ -425,6 +434,7 @@ const PLAYERS = [
     position: "AM",
     club: "Club Brugge",
     clubFlag: "🇧🇪",
+    league: "Jupiler Pro League",
     marketValue: "€40.00m",
     marketValueNum: 40,
     potential: 6,
@@ -444,12 +454,293 @@ const PLAYERS = [
     position: "AM",
     club: "Aston Villa",
     clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
     marketValue: "€90.00m",
     marketValueNum: 90,
     potential: 7,
     comment: "圧倒的個の推進力とボックス内攻略に特化した大型攻撃的MF",
     xUrl: "https://x.com/i/status/2064275100858552455",
     postedAt: "2026-06-13"
+  },
+  {
+    nameJa: "エリオット・アンダーソン",
+    nameEn: "Elliot Anderson",
+    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    nationality: "イングランド",
+    birthYear: 2002,
+    birthDate: "2002年11月6日",
+    height: "179cm / 69kg",
+    foot: "R",
+    position: "CM",
+    club: "Nottingham Forest",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
+    marketValue: "€60.00m",
+    marketValueNum: 60,
+    potential: 7,
+    comment: "圧倒的な回収力と展開力を誇る、中盤の完全無欠な支配者。",
+    xUrl: "https://x.com/i/status/2037535709347844332",
+    postedAt: "2026-06-01"
+  },
+  {
+    nameJa: "マテウス・フェルナンデス",
+    nameEn: "Mateus Fernandes",
+    flag: "🇵🇹",
+    nationality: "ポルトガル",
+    birthYear: 2004,
+    birthDate: "2004年7月10日",
+    height: "180cm",
+    foot: "R",
+    position: "CM",
+    club: "West Ham",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
+    marketValue: "€35.00m（潜在€85.00m）",
+    marketValueNum: 35,
+    potential: 6,
+    comment: "中盤の底から推進力を供給する万能型レジスタ",
+    xUrl: "https://x.com/i/status/2056295296670601663",
+    postedAt: "2026-06-07"
+  },
+  {
+    nameJa: "エリ・ジュニオール・クルピ",
+    nameEn: "Eli Junior Kroupi",
+    flag: "🇫🇷🇨🇮",
+    nationality: "フランス/コートジボワール",
+    birthYear: 2006,
+    birthDate: "2006年6月23日",
+    height: "179cm",
+    foot: "R",
+    position: "CF",
+    club: "AFC Bournemouth",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
+    marketValue: "€40.0m",
+    marketValueNum: 40,
+    potential: 7,
+    comment: "研ぎ澄まされた得点感覚を誇る冷徹なポーチャー",
+    xUrl: "https://x.com/i/status/2053079985402069103",
+    postedAt: "2026-06-05"
+  },
+  {
+    nameJa: "ヴィクトル・フロホルト",
+    nameEn: "Victor Froholdt",
+    flag: "🇩🇰",
+    nationality: "デンマーク",
+    birthYear: 2006,
+    birthDate: "2006年2月25日",
+    height: "187cm",
+    foot: "R",
+    position: "DM",
+    club: "Porto",
+    clubFlag: "🇵🇹",
+    league: "Primeira Liga",
+    marketValue: "€30.00m",
+    marketValueNum: 30,
+    potential: 7,
+    comment: "圧倒的推進力を誇る北欧のダイナモ",
+    xUrl: "https://x.com/i/status/2052364368747327922",
+    postedAt: "2026-06-04"
+  },
+  {
+    nameJa: "イリマン・エンディアイエ",
+    nameEn: "Iliman Ndiaye",
+    flag: "🇸🇳",
+    nationality: "セネガル",
+    birthYear: 2000,
+    birthDate: "2000年3月6日",
+    height: "180cm",
+    foot: "R",
+    position: "CF",
+    club: "Everton",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
+    marketValue: "€50.00m",
+    marketValueNum: 50,
+    potential: 5,
+    comment: "守備的貢献と密集を打開するドリブルを兼ね備えた異端のアタッカー",
+    xUrl: "https://x.com/i/status/2039688022753779964",
+    postedAt: "2026-06-02"
+  },
+  {
+    nameJa: "ピエロ・インカピエ",
+    nameEn: "Piero Hincapie",
+    flag: "🇪🇨",
+    nationality: "エクアドル",
+    birthYear: 2002,
+    birthDate: "2002年1月9日",
+    height: "184cm / 76kg",
+    foot: "L",
+    position: "CB",
+    club: "Arsenal",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Premier League",
+    marketValue: "€50.00m",
+    marketValueNum: 50,
+    potential: 6,
+    comment: "攻撃を創り、息の根を止める。左の絶対的支配者。南米特有の野性と、欧州最高峰の戦術知能。",
+    xUrl: "https://x.com/i/status/2035644170057244886",
+    postedAt: "2026-05-31"
+  },
+  {
+    nameJa: "佐野海舟",
+    nameEn: "Kaishu Sano",
+    flag: "🇯🇵",
+    nationality: "日本",
+    birthYear: 2000,
+    birthDate: "2000年12月30日",
+    height: "176cm",
+    foot: "R",
+    position: "DM",
+    club: "Mainz 05",
+    clubFlag: "🇩🇪",
+    league: "Bundesliga",
+    marketValue: "€21.2m",
+    marketValueNum: 21.2,
+    potential: 5,
+    comment: "無尽蔵の体力で中盤を制圧する絶対的ボールハンター",
+    xUrl: "https://x.com/i/status/2040778102897549420",
+    postedAt: "2026-06-03"
+  },
+  {
+    nameJa: "ミカ・ゴッツ",
+    nameEn: "Mika Godts",
+    flag: "🇧🇪",
+    nationality: "ベルギー",
+    birthYear: 2005,
+    birthDate: "2005年6月7日",
+    height: "176cm",
+    foot: "R",
+    position: "LW",
+    club: "Ajax",
+    clubFlag: "🇳🇱",
+    league: "Eredivisie",
+    marketValue: "€25.00m",
+    marketValueNum: 25,
+    potential: 6,
+    comment: "卓越した得点力と左翼からの破壊力を備える次世代の崩しの切り札",
+    xUrl: "https://x.com/i/status/2050902419337581011",
+    postedAt: "2026-06-06"
+  },
+  {
+    nameJa: "ヴァシリエ・コストヴ",
+    nameEn: "Vasilije Kostov",
+    flag: "🇷🇸",
+    nationality: "セルビア",
+    birthYear: 2008,
+    birthDate: "2008年5月11日",
+    height: "176cm",
+    foot: "R",
+    position: "AM",
+    club: "Red Star Belgrade",
+    clubFlag: "🇷🇸",
+    league: "Serbian SuperLiga",
+    marketValue: "€18.00m",
+    marketValueNum: 18,
+    potential: 6,
+    comment: "セルビアが誇る次世代の絶対的司令塔",
+    xUrl: "https://x.com/i/status/2050456494559388055",
+    postedAt: "2026-06-06"
+  },
+  {
+    nameJa: "サイード・エル・マラ",
+    nameEn: "Saïd El Mala",
+    flag: "🇩🇪",
+    nationality: "ドイツ",
+    birthYear: 2006,
+    birthDate: "2006年8月26日",
+    height: "187cm",
+    foot: "両足",
+    position: "RW",
+    club: "1.FC Köln",
+    clubFlag: "🇩🇪",
+    league: "Bundesliga",
+    marketValue: "€35.0m",
+    marketValueNum: 35,
+    potential: 7,
+    comment: "独り、ゴールへと突き進むブンデスの「槍」",
+    xUrl: "https://x.com/i/status/2047296214304198690",
+    postedAt: "2026-06-05"
+  },
+  {
+    nameJa: "レレボヒレ・モフォケング",
+    nameEn: "Relebohile Mofokeng",
+    flag: "🇿🇦",
+    nationality: "南アフリカ",
+    birthYear: 2004,
+    birthDate: "2004年10月23日",
+    height: "168cm",
+    foot: "R",
+    position: "RW",
+    club: "Orlando Pirates",
+    clubFlag: "🇿🇦",
+    league: "South African Premiership",
+    marketValue: "€3.00m",
+    marketValueNum: 3,
+    potential: 4,
+    comment: "圧倒的な創造性で敵陣を解体する南アフリカの至宝",
+    xUrl: "https://x.com/i/status/2065011144012730777",
+    postedAt: "2026-06-14"
+  },
+  {
+    nameJa: "ジョナサン・ロウ",
+    nameEn: "Jonathan Rowe",
+    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    nationality: "イングランド",
+    birthYear: 2003,
+    birthDate: "2003年4月30日",
+    height: "173cm",
+    foot: "R",
+    position: "LW",
+    club: "Bologna FC 1909",
+    clubFlag: "🇮🇹",
+    league: "Serie A",
+    marketValue: "€28.00m",
+    marketValueNum: 28,
+    potential: 6,
+    comment: "左大外から中央へ鋭く侵入し、局面を破壊するインバーテッド・ウィンガー",
+    xUrl: "https://x.com/i/status/2064973882071953816",
+    postedAt: "2026-06-14"
+  },
+  {
+    nameJa: "ヤン・ディオマンデ",
+    nameEn: "Yan Diomande",
+    flag: "🇨🇮",
+    nationality: "コートジボワール",
+    birthYear: 2006,
+    birthDate: "2006年11月14日",
+    height: "180cm / 76kg",
+    foot: "R",
+    position: "LW",
+    club: "RB Leipzig",
+    clubFlag: "🇩🇪",
+    league: "Bundesliga",
+    marketValue: "€75.00m",
+    marketValueNum: 75,
+    potential: 8,
+    comment: "ボールを支配し、運命を変える男。",
+    xUrl: "https://x.com/i/status/2037830796711796934",
+    postedAt: "2026-06-01"
+  },
+  {
+    nameJa: "ジェレミー・ンゴラ・モンガ",
+    nameEn: "Jeremy Ngola Monga",
+    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿🇿🇲",
+    nationality: "イングランド/ザンビア",
+    birthYear: 2009,
+    birthDate: "2009年7月10日",
+    height: "179cm",
+    foot: "R",
+    position: "AM",
+    club: "Leicester City",
+    clubFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    league: "Championship",
+    marketValue: "€10.0m",
+    marketValueNum: 10,
+    potential: 7,
+    comment: "16歳にして市場価値1000万ユーロ。フォックスが抱く「21世紀の原石」",
+    xUrl: "https://x.com/i/status/2046915610064597464",
+    postedAt: "2026-06-05"
   }
   /* ↑ ここより上に選手データをカンマ区切りで追加 */
 ];
@@ -461,9 +752,20 @@ let currentSort = 'ja';
 let currentPot  = 'all';
 let currentNat  = '';
 let currentPos  = '';
+let currentPosGroup = '';
 let currentClub = '';
 let currentYear = '';
 let currentQ    = '';
+
+/* ポジション大分類マッピング */
+const POS_GROUP_MAP = {
+  GK: 'GK',
+  CB: 'DF', LB: 'DF', RB: 'DF',
+  DM: 'MF', CM: 'MF', AM: 'MF',
+  LW: 'FW', RW: 'FW', CF: 'FW'
+};
+function posGroup(pos) { return POS_GROUP_MAP[pos] || pos; }
+const POS_GROUP_ORDER = { GK:0, DF:1, MF:2, FW:3 };
 
 /* ================================================================
    BOOT
@@ -511,6 +813,7 @@ function setSort(val, btn) {
 function applyFilters() {
   currentQ    = document.getElementById('searchInput').value.trim().toLowerCase();
   currentNat  = document.getElementById('filterNat').value;
+  currentPosGroup = document.getElementById('filterPosGroup').value;
   currentClub = document.getElementById('filterClub').value;
   currentYear = document.getElementById('filterYear').value;
   renderCards();
@@ -519,6 +822,7 @@ function applyFilters() {
 function getFiltered() {
   return PLAYERS.filter(p => {
     if(currentNat  && p.nationality !== currentNat) return false;
+    if(currentPosGroup && posGroup(p.position) !== currentPosGroup) return false;
     if(currentClub && p.club !== currentClub)       return false;
     if(currentYear && String(p.birthYear) !== currentYear) return false;
     if(currentPot === '8' && p.potential !== 8) return false;
@@ -542,6 +846,12 @@ function getSorted(arr) {
     if(currentSort==='val') return b.marketValueNum - a.marketValueNum;
     if(currentSort==='date')return new Date(b.postedAt)-new Date(a.postedAt);
     if(currentSort==='nat') return a.nationality.localeCompare(b.nationality,'ja');
+    if(currentSort==='posgroup') {
+      const ga = POS_GROUP_ORDER[posGroup(a.position)] ?? 9;
+      const gb = POS_GROUP_ORDER[posGroup(b.position)] ?? 9;
+      return ga - gb;
+    }
+    if(currentSort==='league') return (a.league||'').localeCompare(b.league||'','en');
     return 0;
   });
 }
